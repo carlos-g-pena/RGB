@@ -51,6 +51,60 @@ def saturar_colores(m):
                     pixel[i] += int((pixel[i] - 128) * (1 - saturacion))
     return matriz
 
+def saturar_colores(m):
+    saturacion=0.1
+    matriz = copiar_matriz(m)
+    for fila in matriz:
+        for pixel in fila:
+            for i in range(3):
+                if pixel[i] < 128:
+                    pixel[i] -= int((128 - pixel[i]) * (1 - saturacion))
+                else:
+                    pixel[i] += int((pixel[i] - 128) * (1 - saturacion))
+    return matriz
+
+
+
+def dibujar_linea_en_medio(m):
+    rojo=(255,0,0)
+    matriz=copiar_matriz(m)
+    alto = len(matriz)
+    ancho = len(matriz[0])
+    fila_medio = alto // 2
+
+    for i in range(fila_medio - 5 // 2, fila_medio + 5 // 2 + 1):
+        for j in range(ancho):
+            matriz[i][j] = list(rojo)
+    return matriz
+
+def aplicar_filtro_promedio(matriz):
+    filas = len(matriz)
+    columnas = len(matriz[0])
+    matriz_difuminada = copiar_matriz(matriz)
+
+    for i in range(1, filas - 1):  # Excluir los bordes de la imagen
+        for j in range(1, columnas - 1):  # Excluir los bordes de la imagen
+            promedio_r, promedio_g, promedio_b = 0, 0, 0
+
+            for dy in range(-1, 2):  # Rango [-1, 0, 1]
+                for dx in range(-1, 2):  # Rango [-1, 0, 1]
+                    pixel = matriz_difuminada[i + dy][j + dx]
+                    promedio_r += pixel[0]
+                    promedio_g += pixel[1]
+                    promedio_b += pixel[2]
+
+            promedio_r //= 9  # Dividir por el número de vecinos
+            promedio_g //= 9
+            promedio_b //= 9
+
+            matriz_difuminada[i][j] = [promedio_r, promedio_g, promedio_b]
+
+    return matriz_difuminada
+
+def difuminar_imagen(m, iteraciones):
+    for _ in range(iteraciones):
+        m = aplicar_filtro_promedio(m) 
+    return m
 
 def convertir_escala_de_grises(m):
     matriz = copiar_matriz(m)
@@ -102,6 +156,6 @@ salida_img = "img_modificada.png"
 convertir_imagen_a_archivo(name_img, array_img)
 matriz_img = leer_archivo(array_img)
 
-new_matriz = saturar_colores(matriz_img)
+new_matriz = difuminar_imagen(matriz_img,10)
 
 convertir_matriz_a_imagen(new_matriz, salida_img, True)
