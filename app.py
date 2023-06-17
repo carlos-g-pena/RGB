@@ -101,8 +101,8 @@ def aplicar_filtro_promedio(matriz):
 
     return matriz_difuminada
 
-def difuminar_imagen(m, iteraciones):
-    for _ in range(iteraciones):
+def difuminar_imagen(m):
+    for _ in range(10):
         m = aplicar_filtro_promedio(m) 
     return m
 
@@ -156,6 +156,6 @@ salida_img = "img_modificada.png"
 convertir_imagen_a_archivo(name_img, array_img)
 matriz_img = leer_archivo(array_img)
 
-new_matriz = difuminar_imagen(matriz_img,10)
+new_matriz = difuminar_imagen(matriz_img)
 
 convertir_matriz_a_imagen(new_matriz, salida_img, True)
